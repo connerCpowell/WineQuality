@@ -14,6 +14,7 @@
 # ---
 
 # %%
+#requried imports
 
 import numpy as np
 import pandas as pd
@@ -33,16 +34,20 @@ warnings.filterwarnings('ignore')
 
 
 # %%
+#importing data
 
 df = pd.read_csv('./winequality/winequality-red.csv')
 print(df.head())
 
 
 # %%
-df.info()
+#investigation of dataset using preset 
+
+#df.info()
+
+df.describe().T
 
 # %%
-df.describe().T
 
 # %%
 #df.isnull().sum()
@@ -95,7 +100,7 @@ xtest = norm.transform(xtest)
 
 
 # %%
-metrics.ConfusionMatrixDisplay(models[1], xtest)
+metrics.ConfusionMatrixDisplay(ytest, ytrain)
 plt.show()
 
 
