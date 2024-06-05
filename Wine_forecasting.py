@@ -24,7 +24,7 @@ import seaborn as sb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn import metrics
-from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
@@ -41,7 +41,7 @@ print(df.head())
 
 
 # %%
-#investigation of dataset using preset 
+#investigation of dataset using presets
 
 #df.info()
 
@@ -50,6 +50,8 @@ df.describe().T
 # %%
 
 # %%
+#removing all null values from the set
+
 #df.isnull().sum()
 
 for col in df.columns:
@@ -78,7 +80,7 @@ plt.show()
 
 
 # %%
-
+#prepparing datasets for training
 df['best quality'] = [1 if x > 5 else 0 for x in df.quality]
 
 
@@ -92,6 +94,7 @@ xtrain.shape, xtest.shape
 
 
 # %%
+# normalizing data
 
 norm = MinMaxScaler()
 xtrain = norm.fit_transform(xtrain)
@@ -100,8 +103,31 @@ xtest = norm.transform(xtest)
 
 
 # %%
-metrics.ConfusionMatrixDisplay(ytest, ytrain)
+from sklearn.svm import SVC
+
+clf = SVC(random_state=0)
+clf.fit(xtrain, ytrain)
+
+predictions = clf.predict(xtest)
+cm = confusion_matrix(ytest, predictions, labels=clf.classes_)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm,
+                              display_labels=clf.classes_)
+disp.plot()
+
 plt.show()
+
+# %%
+
+models = [LogisticRegression(), XGBClassifier(), SVC(kernel='rbf')]
+ 
+for i in range(3):
+    models[i].fit(xtrain, ytrain)
+ 
+    print(f'{models[i]} : ')
+    print('Training Accuracy : ', metrics.roc_auc_score(ytrain, models[i].predict(xtrain)))
+    print('Validation Accuracy : ', metrics.roc_auc_score(
+        ytest, models[i].predict(xtest)))
+    print()
 
 
 # %%
@@ -110,5 +136,7 @@ plt.show()
 print(metrics.classification_report(ytest,
                                     models[1].predict(xtest)))
 
+
+# %%
 
 # %%
