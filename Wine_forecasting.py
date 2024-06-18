@@ -37,8 +37,18 @@ warnings.filterwarnings('ignore')
 #importing data
 
 df = pd.read_csv('./winequality/winequality-red.csv')
-print(df.head())
+#print(df.head())
 
+len(df)
+
+
+# %%
+row_sums = df.sum(axis=1)
+row_means = row_sums / df.shape[1]
+
+#row_means.head()
+df['total_score'] = row_means
+df.head()
 
 # %%
 #investigation of dataset using presets
@@ -75,8 +85,14 @@ plt.show()
 
 
 # %%
+plt.bar(df['quality'], df['total_score'])
+plt.xlabel('quality')
+plt.ylabel('total score')
+plt.show()
+
+# %%
 plt.figure(figsize=(12, 12))
-sb.heatmap(df.corr() > 0.65, annot=True, cbar=False)
+sb.heatmap(df.corr() > 0.70, annot=True, cbar=False)
 plt.show()
 
 
